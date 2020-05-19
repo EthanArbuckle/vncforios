@@ -428,9 +428,6 @@
 					"-lpng",
 					"-lssl",
 					"-lvncserverstatic",
-					"-F/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/",
-					"-lresolv",
-					"-ldigitizer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -464,9 +461,6 @@
 					"-lpng",
 					"-lssl",
 					"-lvncserverstatic",
-					"-F/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/",
-					"-lresolv",
-					"-ldigitizer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
