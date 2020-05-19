@@ -1,0 +1,521 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CE266EA92470BFD7000E4731 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE266EA82470BFD6000E4731 /* IOKit.framework */; platformFilter = ios; };
+		CE4958AD247118F900B62644 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A88C8208E671F0048DFA0 /* main.m */; };
+		CE4958AF247134A600B62644 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4958AE247134A600B62644 /* UIKit.framework */; platformFilter = ios; };
+		CE4958B1247134AB00B62644 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4958B0247134AA00B62644 /* CoreImage.framework */; };
+		CE4958B924715E9E00B62644 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CE4958B824715E9E00B62644 /* main.m */; };
+		CEFB4586246FF8530076232D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFB4585246FF8530076232D /* CoreFoundation.framework */; };
+		CEFB4598246FFAFB0076232D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFB4597246FFAFB0076232D /* CoreGraphics.framework */; };
+		CEFB459D246FFBD80076232D /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFB459C246FFBD80076232D /* IOSurface.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CE4958BD24715F1700B62644 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 551A88BC208E671F0048DFA0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 551A88C3208E671F0048DFA0;
+			remoteInfo = ivnc;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CE4958B424715E9E00B62644 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		551A88C4208E671F0048DFA0 /* vncforios */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vncforios; sourceTree = BUILT_PRODUCTS_DIR; };
+		551A88C8208E671F0048DFA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CE266EA82470BFD6000E4731 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		CE2E339F247378D000F4E788 /* external.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = external.h; sourceTree = "<group>"; };
+		CE2E33A02473793300F4E788 /* deploy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = deploy.py; sourceTree = "<group>"; };
+		CE4958AE247134A600B62644 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CE4958B0247134AA00B62644 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
+		CE4958B624715E9E00B62644 /* run */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = run; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE4958B824715E9E00B62644 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CEFB4582246FC8530076232D /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
+		CEFB4585246FF8530076232D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		CEFB4587246FF8CA0076232D /* sdks-master */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "sdks-master"; path = "../../Downloads/sdks-master"; sourceTree = "<group>"; };
+		CEFB4588246FF8E40076232D /* IOMobileFramebuffer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOMobileFramebuffer.framework; path = "../../Downloads/sdks-master/iPhoneOS9.3.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework"; sourceTree = "<group>"; };
+		CEFB458C246FF9500076232D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = "../../Downloads/sdks-master/iPhoneOS9.3.sdk/System/Library/PrivateFrameworks/IOSurface.framework"; sourceTree = "<group>"; };
+		CEFB458F246FF9BA0076232D /* IOSurfaceAccelerator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurfaceAccelerator.framework; path = "../../Downloads/sdks-master/iPhoneOS9.3.sdk/System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework"; sourceTree = "<group>"; };
+		CEFB4592246FFA0B0076232D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = "../../Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/Frameworks/IOSurface.framework"; sourceTree = "<group>"; };
+		CEFB4597246FFAFB0076232D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		CEFB459C246FFBD80076232D /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/IOSurface.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		551A88C1208E671F0048DFA0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEFB459D246FFBD80076232D /* IOSurface.framework in Frameworks */,
+				CEFB4598246FFAFB0076232D /* CoreGraphics.framework in Frameworks */,
+				CEFB4586246FF8530076232D /* CoreFoundation.framework in Frameworks */,
+				CE266EA92470BFD7000E4731 /* IOKit.framework in Frameworks */,
+				CE4958AF247134A600B62644 /* UIKit.framework in Frameworks */,
+				CE4958B1247134AB00B62644 /* CoreImage.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE4958B324715E9E00B62644 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		551A88BB208E671F0048DFA0 = {
+			isa = PBXGroup;
+			children = (
+				CEFB4582246FC8530076232D /* entitlements.plist */,
+				CE2E33A02473793300F4E788 /* deploy.py */,
+				551A88C6208E671F0048DFA0 /* vncforios */,
+				CE4958B724715E9E00B62644 /* run */,
+				551A88C5208E671F0048DFA0 /* Products */,
+				CEFB4584246FF8530076232D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		551A88C5208E671F0048DFA0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				551A88C4208E671F0048DFA0 /* vncforios */,
+				CE4958B624715E9E00B62644 /* run */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		551A88C6208E671F0048DFA0 /* vncforios */ = {
+			isa = PBXGroup;
+			children = (
+				551A88C8208E671F0048DFA0 /* main.m */,
+				CE2E339F247378D000F4E788 /* external.h */,
+			);
+			path = vncforios;
+			sourceTree = "<group>";
+		};
+		CE4958B724715E9E00B62644 /* run */ = {
+			isa = PBXGroup;
+			children = (
+				CE4958B824715E9E00B62644 /* main.m */,
+			);
+			path = run;
+			sourceTree = "<group>";
+		};
+		CEFB4584246FF8530076232D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CE4958B0247134AA00B62644 /* CoreImage.framework */,
+				CE4958AE247134A600B62644 /* UIKit.framework */,
+				CE266EA82470BFD6000E4731 /* IOKit.framework */,
+				CEFB459C246FFBD80076232D /* IOSurface.framework */,
+				CEFB4597246FFAFB0076232D /* CoreGraphics.framework */,
+				CEFB4592246FFA0B0076232D /* IOSurface.framework */,
+				CEFB458F246FF9BA0076232D /* IOSurfaceAccelerator.framework */,
+				CEFB458C246FF9500076232D /* IOSurface.framework */,
+				CEFB4588246FF8E40076232D /* IOMobileFramebuffer.framework */,
+				CEFB4587246FF8CA0076232D /* sdks-master */,
+				CEFB4585246FF8530076232D /* CoreFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		551A88C3208E671F0048DFA0 /* vncforios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 551A88CD208E671F0048DFA0 /* Build configuration list for PBXNativeTarget "vncforios" */;
+			buildPhases = (
+				551A88C0208E671F0048DFA0 /* Sources */,
+				551A88C1208E671F0048DFA0 /* Frameworks */,
+				CEFB4583246FC8860076232D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vncforios;
+			productName = "ios-command-line-tool";
+			productReference = 551A88C4208E671F0048DFA0 /* vncforios */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		CE4958B524715E9E00B62644 /* run */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE4958BA24715E9E00B62644 /* Build configuration list for PBXNativeTarget "run" */;
+			buildPhases = (
+				CE4958B224715E9E00B62644 /* Sources */,
+				CE4958B324715E9E00B62644 /* Frameworks */,
+				CE4958B424715E9E00B62644 /* CopyFiles */,
+				CE4958C02471658300B62644 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CE4958BE24715F1700B62644 /* PBXTargetDependency */,
+			);
+			name = run;
+			productName = run;
+			productReference = CE4958B624715E9E00B62644 /* run */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		551A88BC208E671F0048DFA0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = "Brandon Azad";
+				TargetAttributes = {
+					551A88C3208E671F0048DFA0 = {
+						CreatedOnToolsVersion = 9.3;
+					};
+					CE4958B524715E9E00B62644 = {
+						CreatedOnToolsVersion = 11.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 551A88BF208E671F0048DFA0 /* Build configuration list for PBXProject "vncforios" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 551A88BB208E671F0048DFA0;
+			productRefGroup = 551A88C5208E671F0048DFA0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				551A88C3208E671F0048DFA0 /* vncforios */,
+				CE4958B524715E9E00B62644 /* run */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CE4958C02471658300B62644 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
+		CEFB4583246FC8860076232D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\nexport BUILD_OUTPUT=${BUILT_PRODUCTS_DIR}/${EXECUTABLE_NAME}\nexport ENTITLEMENT_FILE=${PROJECT_DIR}/entitlements.plist\necho ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_NAME}\npython3 deploy.py\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		551A88C0208E671F0048DFA0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE4958AD247118F900B62644 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE4958B224715E9E00B62644 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE4958B924715E9E00B62644 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CE4958BE24715F1700B62644 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 551A88C3208E671F0048DFA0 /* vncforios */;
+			targetProxy = CE4958BD24715F1700B62644 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		551A88CB208E671F0048DFA0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		551A88CC208E671F0048DFA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		551A88CE208E671F0048DFA0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 44L979X757;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				ENABLE_BITCODE = NO;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/include",
+					"${PROJECT_DIR}/ivnc",
+				);
+				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/lib";
+				MACH_O_TYPE = mh_execute;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lcrypto",
+					"-ljpeg",
+					"-lpng",
+					"-lssl",
+					"-lvncserverstatic",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		551A88CF208E671F0048DFA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 44L979X757;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				ENABLE_BITCODE = NO;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/include",
+					"${PROJECT_DIR}/ivnc",
+				);
+				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/lib";
+				MACH_O_TYPE = mh_execute;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lcrypto",
+					"-ljpeg",
+					"-lpng",
+					"-lssl",
+					"-lvncserverstatic",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CE4958BB24715E9E00B62644 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 44L979X757;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CE4958BC24715E9E00B62644 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 44L979X757;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		551A88BF208E671F0048DFA0 /* Build configuration list for PBXProject "vncforios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				551A88CB208E671F0048DFA0 /* Debug */,
+				551A88CC208E671F0048DFA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		551A88CD208E671F0048DFA0 /* Build configuration list for PBXNativeTarget "vncforios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				551A88CE208E671F0048DFA0 /* Debug */,
+				551A88CF208E671F0048DFA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE4958BA24715E9E00B62644 /* Build configuration list for PBXNativeTarget "run" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE4958BB24715E9E00B62644 /* Debug */,
+				CE4958BC24715E9E00B62644 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 551A88BC208E671F0048DFA0 /* Project object */;
+}

@@ -1,0 +1,4 @@
+.DS_Store
+*.xcuserdatad/*
+/vncforios.xcodeproj/project.xcworkspace/xcuserdata
+/vncforios.xcodeproj/project.xcworkspace/contents.xcworkspacedata
