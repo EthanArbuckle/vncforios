@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		CE266EA92470BFD7000E4731 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE266EA82470BFD6000E4731 /* IOKit.framework */; platformFilter = ios; };
+		CE2E33A52473B42300F4E788 /* IOMobileFramebuffer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE2E33A12473B39F00F4E788 /* IOMobileFramebuffer.framework */; platformFilter = ios; };
+		CE2E33B92473F05C00F4E788 /* hid.m in Sources */ = {isa = PBXBuildFile; fileRef = CE2E33B82473F05C00F4E788 /* hid.m */; };
 		CE4958AD247118F900B62644 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A88C8208E671F0048DFA0 /* main.m */; };
 		CE4958AF247134A600B62644 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4958AE247134A600B62644 /* UIKit.framework */; platformFilter = ios; };
 		CE4958B1247134AB00B62644 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4958B0247134AA00B62644 /* CoreImage.framework */; };
@@ -45,6 +47,9 @@
 		CE266EA82470BFD6000E4731 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		CE2E339F247378D000F4E788 /* external.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = external.h; sourceTree = "<group>"; };
 		CE2E33A02473793300F4E788 /* deploy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = deploy.py; sourceTree = "<group>"; };
+		CE2E33A12473B39F00F4E788 /* IOMobileFramebuffer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOMobileFramebuffer.framework; path = "../../Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework"; sourceTree = "<group>"; };
+		CE2E33B82473F05C00F4E788 /* hid.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = hid.m; sourceTree = "<group>"; };
+		CE2E33BA2473FB2F00F4E788 /* hid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hid.h; sourceTree = "<group>"; };
 		CE4958AE247134A600B62644 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CE4958B0247134AA00B62644 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
 		CE4958B624715E9E00B62644 /* run */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = run; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +74,7 @@
 				CEFB4598246FFAFB0076232D /* CoreGraphics.framework in Frameworks */,
 				CEFB4586246FF8530076232D /* CoreFoundation.framework in Frameworks */,
 				CE266EA92470BFD7000E4731 /* IOKit.framework in Frameworks */,
+				CE2E33A52473B42300F4E788 /* IOMobileFramebuffer.framework in Frameworks */,
 				CE4958AF247134A600B62644 /* UIKit.framework in Frameworks */,
 				CE4958B1247134AB00B62644 /* CoreImage.framework in Frameworks */,
 			);
@@ -109,6 +115,8 @@
 			isa = PBXGroup;
 			children = (
 				551A88C8208E671F0048DFA0 /* main.m */,
+				CE2E33BA2473FB2F00F4E788 /* hid.h */,
+				CE2E33B82473F05C00F4E788 /* hid.m */,
 				CE2E339F247378D000F4E788 /* external.h */,
 			);
 			path = vncforios;
@@ -125,6 +133,7 @@
 		CEFB4584246FF8530076232D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE2E33A12473B39F00F4E788 /* IOMobileFramebuffer.framework */,
 				CE4958B0247134AA00B62644 /* CoreImage.framework */,
 				CE4958AE247134A600B62644 /* UIKit.framework */,
 				CE266EA82470BFD6000E4731 /* IOKit.framework */,
@@ -186,7 +195,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1140;
-				ORGANIZATIONNAME = "Brandon Azad";
+				ORGANIZATIONNAME = "ethan arbuckle";
 				TargetAttributes = {
 					551A88C3208E671F0048DFA0 = {
 						CreatedOnToolsVersion = 9.3;
@@ -258,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE4958AD247118F900B62644 /* main.m in Sources */,
+				CE2E33B92473F05C00F4E788 /* hid.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,9 +412,10 @@
 				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = "/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/include",
+					"${PROJECT_DIR}/include/**",
 					"${PROJECT_DIR}/ivnc",
 				);
 				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/lib";
@@ -417,6 +428,9 @@
 					"-lpng",
 					"-lssl",
 					"-lvncserverstatic",
+					"-F/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/",
+					"-lresolv",
+					"-ldigitizer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -434,9 +448,10 @@
 				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = "/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/include",
+					"${PROJECT_DIR}/include/**",
 					"${PROJECT_DIR}/ivnc",
 				);
 				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/lib";
@@ -449,6 +464,9 @@
 					"-lpng",
 					"-lssl",
 					"-lvncserverstatic",
+					"-F/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/",
+					"-lresolv",
+					"-ldigitizer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

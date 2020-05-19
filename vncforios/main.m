@@ -4,12 +4,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#include <UIKit/UIKit.h>
 #include <objc/message.h>
-#include <rfb/rfb.h>
-#include <dlfcn.h>
 #include "external.h"
-
+#include "hid.h"
 
 static IOSurfaceRef remoteSurface;
 static IOSurfaceRef fullsizeSurface;
@@ -63,8 +60,8 @@ void create_vnc_server()
     assert(remoteSurface != NULL);
     
     _remote_screen->frameBuffer = IOSurfaceGetBaseAddress(remoteSurface);
-   // _remote_screen->kbdAddEvent = &VNCKeyboard;
-    //_remote_screen->ptrAddEvent = &VNCPointer;
+    _remote_screen->kbdAddEvent = &VNCKeyboard;
+    _remote_screen->ptrAddEvent = &VNCPointerNew;
     _remote_screen->newClientHook = &vnc_client_new;
     _remote_screen->passwordCheck = &vnc_check_password;
     _remote_screen->cursor = NULL;
@@ -136,6 +133,7 @@ int main(int argc, const char *argv[]) {
         
         fullsizeSurface = IOSurfaceCreate((__bridge CFDictionaryRef)properties);
         
+        setup_hid(scaledDisplaySize);
         create_vnc_server();
         
         id drawer = [[VncSurfaceDrawer alloc] init];
