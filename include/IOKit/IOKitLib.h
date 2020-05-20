@@ -1,21 +1,22 @@
 /*
- * Copyright (c) 1998-2000 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 1998-2014 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this
+ * file.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
@@ -45,12 +46,14 @@
 #include <CoreFoundation/CFDictionary.h>
 #include <CoreFoundation/CFRunLoop.h>
 
-#include "IOTypes.h"
-#include "IOKitKeys.h"
+#include <IOKit/IOTypes.h>
+#include <IOKit/IOKitKeys.h>
 
-#include "OSMessageNotification.h"
+#include <IOKit/OSMessageNotification.h>
 
 #include <AvailabilityMacros.h>
+
+#include <dispatch/dispatch.h>
 
 __BEGIN_DECLS
 
@@ -79,7 +82,7 @@ typedef void
     @param refcon The refcon passed when the notification was installed.
     @param service The IOService whose state has changed.
     @param messageType A messageType enum, defined by IOKit/IOMessage.h or by the IOService's family.
-    @param messageArgument An argument for the message, dependent on the messageType.
+    @param messageArgument An argument for the message, dependent on the messageType.  If the message data is larger than sizeof(void*), then messageArgument contains a pointer to the message data; otherwise, messageArgument contains the message data.
 */
 
 typedef void
@@ -123,6 +126,9 @@ IONotificationPortCreate(
 
 /*! @function IONotificationPortDestroy
     @abstract Destroys a notification object created with IONotificationPortCreate.
+                Also destroys any mach_port's or CFRunLoopSources obatined from 
+                <code>@link IONotificationPortGetRunLoopSource @/link</code>
+                or <code>@link IONotificationPortGetMachPort @/link</code>
     @param notify A reference to the notification object. */
 
 void
@@ -131,7 +137,12 @@ IONotificationPortDestroy(
 
 /*! @function IONotificationPortGetRunLoopSource
     @abstract Returns a CFRunLoopSource to be used to listen for notifications.
-    @discussion A notification object may deliver notifications to a CFRunLoop client by adding the run loop source returned by this function to the run loop.
+    @discussion A notification object may deliver notifications to a CFRunLoop 
+                by adding the run loop source returned by this function to the run loop.
+
+                The caller should not release this CFRunLoopSource. Just call 
+                <code>@link IONotificationPortDestroy @/link</code> to dispose of the
+                IONotificationPortRef and the CFRunLoopSource when done.
     @param notify The notification object.
     @result A CFRunLoopSourceRef for the notification object. */
 
@@ -141,7 +152,14 @@ IONotificationPortGetRunLoopSource(
 
 /*! @function IONotificationPortGetMachPort
     @abstract Returns a mach_port to be used to listen for notifications.
-    @discussion A notification object may deliver notifications to a mach messaging client if they listen for messages on the port obtained from this function. Callbacks associated with the notifications may be delivered by calling IODispatchCalloutFromMessage with messages received 
+    @discussion A notification object may deliver notifications to a mach messaging client 
+                if they listen for messages on the port obtained from this function. 
+                Callbacks associated with the notifications may be delivered by calling 
+                IODispatchCalloutFromMessage with messages received.
+                
+                The caller should not release this mach_port_t. Just call 
+                <code>@link IONotificationPortDestroy @/link</code> to dispose of the
+                mach_port_t and IONotificationPortRef when done.
     @param notify The notification object.
     @result A mach_port for the notification object. */
 
@@ -149,9 +167,34 @@ mach_port_t
 IONotificationPortGetMachPort(
 	IONotificationPortRef	notify );
 
+/*! @function IONotificationPortSetImportanceReceiver
+    @abstract Configure a notification port to be an importance receiver.
+    @discussion Sets the MACH_PORT_IMPORTANCE_RECEIVER attribute on the underlying mach port.
+                Importance-donating messages sent to a notification port with this
+                attribute enabled will boost the importance of the receiving process for the
+                duration of the notification handler.
+    @param notify The notification object.
+    @result A kern_return_t error code. */
+
+kern_return_t
+IONotificationPortSetImportanceReceiver(
+	IONotificationPortRef	notify );
+
+/*! @function IONotificationPortSetDispatchQueue
+    @abstract Sets a dispatch queue to be used to listen for notifications.
+    @discussion A notification object may deliver notifications to a dispatch client.
+    @param notify The notification object.
+    @param queue A dispatch queue. */
+
+void
+IONotificationPortSetDispatchQueue(
+	IONotificationPortRef notify, dispatch_queue_t queue )
+__OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_4_3);
+
 /*! @function IODispatchCalloutFromMessage
     @abstract Dispatches callback notifications from a mach message.
-    @discussion A notification object may deliver notifications to a mach messaging client, which should call this function to generate the callbacks associated with the notifications arriving on the port.
+    @discussion A notification object may deliver notifications to a mach messaging client, 
+                which should call this function to generate the callbacks associated with the notifications arriving on the port.
     @param unused Not used, set to zero.
     @param msg A pointer to the message received.
     @param reference Pass the IONotificationPortRef for the object. */
@@ -214,7 +257,7 @@ IOObjectGetClass(
 	io_object_t	object,
 	io_name_t	className );
 	
-/*! @function CFStringRef IOObjectCopyClass
+/*! @function IOObjectCopyClass
     @abstract Return the class name of an IOKit object.
 	@discussion This function does the same thing as IOObjectGetClass, but returns the result as a CFStringRef.
 	@param object The IOKit object.
@@ -224,7 +267,7 @@ CFStringRef
 IOObjectCopyClass(io_object_t object)
 AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
 
-/*! @function CFStringRef IOObjectCopySuperclassForClass
+/*! @function IOObjectCopySuperclassForClass
     @abstract Return the superclass name of the given class.
     @discussion This function uses the OSMetaClass system in the kernel to derive the name of the superclass of the class.
 	@param classname The name of the class as a CFString.
@@ -234,7 +277,7 @@ CFStringRef
 IOObjectCopySuperclassForClass(CFStringRef classname)
 AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
 
-/*! @function CFStringRef IOObjectCopyBundleIdentifierForClass
+/*! @function IOObjectCopyBundleIdentifierForClass
     @abstract Return the bundle identifier of the given class.
 	@discussion This function uses the OSMetaClass system in the kernel to derive the name of the kmod, which is the same as the bundle identifier.
 	@param classname The name of the class as a CFString.
@@ -268,15 +311,38 @@ IOObjectIsEqualTo(
 	io_object_t	object,
 	io_object_t	anObject );
 
-/*! @function IOObjectGetRetainCount
+/*! @function IOObjectGetKernelRetainCount
     @abstract Returns kernel retain count of an IOKit object.
-    @discussion This function may be used in diagnostics to determine the current retain count of the kernel object.
+    @discussion This function may be used in diagnostics to determine the current retain count of the kernel object at the kernel level.
+    @param object An IOKit object.
+    @result If the object handle is valid, the kernel objects retain count is returned, otherwise zero is returned. */
+
+uint32_t
+IOObjectGetKernelRetainCount(
+	io_object_t	object )
+AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER;
+
+/*! @function IOObjectGetUserRetainCount
+    @abstract Returns the retain count for the current process of an IOKit object.
+    @discussion This function may be used in diagnostics to determine the current retain count for the calling process of the kernel object.
+    @param object An IOKit object.
+    @result If the object handle is valid, the objects user retain count is returned, otherwise zero is returned. */
+
+uint32_t
+IOObjectGetUserRetainCount(
+	io_object_t	object )
+AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER;
+
+/*! @function IOObjectGetRetainCount
+    @abstract Returns kernel retain count of an IOKit object. Identical to IOObjectGetKernelRetainCount() but available prior to Mac OS 10.6.
+    @discussion This function may be used in diagnostics to determine the current retain count of the kernel object at the kernel level.
     @param object An IOKit object.
     @result If the object handle is valid, the kernel objects retain count is returned, otherwise zero is returned. */
 
 uint32_t
 IOObjectGetRetainCount(
 	io_object_t	object );
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -324,27 +390,27 @@ IOIteratorIsValid(
     @abstract Look up a registered IOService object that matches a matching dictionary.
     @discussion This is the preferred method of finding IOService objects currently registered by IOKit (that is, objects that have had their registerService() methods invoked). To find IOService objects that aren't yet registered, use an iterator as created by IORegistryEntryCreateIterator(). IOServiceAddMatchingNotification can also supply this information and install a notification of new IOServices. The matching information used in the matching dictionary may vary depending on the class of service being looked up.
     @param masterPort The master port obtained from IOMasterPort(). Pass kIOMasterPortDefault to look up the default master port.
-    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching, IOOpenFirmwarePathMatching.
+    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
     @result The first service matched is returned on success. The service must be released by the caller.
   */
 
 io_service_t
 IOServiceGetMatchingService(
 	mach_port_t	masterPort,
-	CFDictionaryRef	matching );
+	CFDictionaryRef	matching CF_RELEASES_ARGUMENT);
 
 /*! @function IOServiceGetMatchingServices
     @abstract Look up registered IOService objects that match a matching dictionary.
     @discussion This is the preferred method of finding IOService objects currently registered by IOKit (that is, objects that have had their registerService() methods invoked). To find IOService objects that aren't yet registered, use an iterator as created by IORegistryEntryCreateIterator(). IOServiceAddMatchingNotification can also supply this information and install a notification of new IOServices. The matching information used in the matching dictionary may vary depending on the class of service being looked up.
     @param masterPort The master port obtained from IOMasterPort(). Pass kIOMasterPortDefault to look up the default master port.
-    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching, IOOpenFirmwarePathMatching.
-    @param existing An iterator handle is returned on success, and should be released by the caller when the iteration is finished.
+    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
+    @param existing An iterator handle, or NULL, is returned on success, and should be released by the caller when the iteration is finished. If NULL is returned, the iteration was successful but found no matching services.
     @result A kern_return_t error code. */
 
 kern_return_t
 IOServiceGetMatchingServices(
 	mach_port_t	masterPort,
-	CFDictionaryRef	matching,
+	CFDictionaryRef	matching CF_RELEASES_ARGUMENT,
 	io_iterator_t * existing );
 
 
@@ -367,7 +433,7 @@ IOServiceAddNotification(
 <br>	kIOMatchedNotification Delivered when an IOService has had all matching drivers in the kernel probed and started.
 <br>	kIOFirstMatchNotification Delivered when an IOService has had all matching drivers in the kernel probed and started, but only once per IOService instance. Some IOService's may be reregistered when their state is changed.
 <br>	kIOTerminatedNotification Delivered after an IOService has been terminated.
-    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching, IOOpenFirmwarePathMatching.
+    @param matching A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
     @param callback A callback function called when the notification fires.
     @param refCon A reference constant for the callbacks use.
     @param notification An iterator handle is returned on success, and should be released by the caller when the notification is to be destroyed. The notification is armed when the iterator is emptied by calls to IOIteratorNext - when no more objects are returned, the notification is armed. Note the notification is not armed when first created.
@@ -377,17 +443,17 @@ kern_return_t
 IOServiceAddMatchingNotification(
 	IONotificationPortRef	notifyPort,
 	const io_name_t		notificationType,
-	CFDictionaryRef		matching,
+	CFDictionaryRef		matching CF_RELEASES_ARGUMENT,
         IOServiceMatchingCallback callback,
         void *			refCon,
 	io_iterator_t * 	notification );
 
 /*! @function IOServiceAddInterestNotification
     @abstract Register for notification of state changes in an IOService.
-    @discussion IOService objects deliver notifications of their state changes to their clients via the IOService::message API, and to other interested parties including callers of this function. Message type s are defined IOKit/IOMessage.h.
+    @discussion IOService objects deliver notifications of their state changes to their clients via the IOService::messageClients API, and to other interested parties including callers of this function. Message types are defined IOKit/IOMessage.h.
     @param notifyPort A IONotificationPortRef object that controls how messages will be sent when the notification is fired. See IONotificationPortCreate.
     @param interestType A notification type from IOKitKeys.h
-<br>	kIOGeneralInterest General state changes delivered via the IOService::message API.
+<br>	kIOGeneralInterest General state changes delivered via the IOService::messageClients API.
 <br>	kIOBusyInterest Delivered when the IOService changes its busy state to or from zero. The message argument contains the new busy state causing the notification.
     @param callback A callback function called when the notification fires, with messageType and messageArgument for the state change.
     @param refCon A reference constant for the callbacks use.
@@ -407,7 +473,7 @@ IOServiceAddInterestNotification(
     @abstract Match an IOService objects with matching dictionary.
     @discussion This function calls the matching method of an IOService object and returns the boolean result.
     @param service The IOService object to match.
-    @param matching A CF dictionary containing matching information. IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching, IOOpenFirmwarePathMatching.
+    @param matching A CF dictionary containing matching information. IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
     @param matches The boolean result is returned.
     @result A kern_return_t error code. */
 
@@ -493,7 +559,29 @@ IOServiceRequestProbe(
 	io_service_t    service,
 	uint32_t	options );
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// options for IOServiceAuthorize()
+enum {
+    kIOServiceInteractionAllowed	= 0x00000001
+};
+
+/*! @function IOServiceAuthorize
+    @abstract Authorize access to an IOService.
+    @discussion Determine whether this application is authorized to invoke IOServiceOpen() for a given IOService, either by confirming that it has been previously authorized by the user, or by soliciting the console user.
+    @param service The IOService object to be authorized, usually obtained via the IOServiceGetMatchingServices or IOServiceAddNotification APIs.
+    @param options kIOServiceInteractionAllowed may be set to permit user interaction, if required.
+    @result kIOReturnSuccess if the IOService is authorized, kIOReturnNotPermitted if the IOService is not authorized. */
+
+kern_return_t
+IOServiceAuthorize(
+	io_service_t	service,
+	uint32_t	options );
+
+int
+IOServiceOpenAsFileDescriptor(
+	io_service_t	service,
+	int		oflag );
+
+/* * * * * * * * * * * * * * *ff * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
  * IOService connection
@@ -567,7 +655,8 @@ IOConnectSetNotificationPort(
     @param ofSize The size of the mapping created is passed back on success.
     @result A kern_return_t error code. */
 
-#if !__LP64__
+#if !__LP64__ || defined(IOCONNECT_MAPMEMORY_10_6)
+
 kern_return_t
 IOConnectMapMemory(
 	io_connect_t	connect,
@@ -577,11 +666,32 @@ IOConnectMapMemory(
 	vm_size_t	*ofSize,
 	IOOptionBits	 options );
 
-kern_return_t IOConnectMapMemory64
 #else
-kern_return_t IOConnectMapMemory
-#endif
-	(io_connect_t		connect,
+
+kern_return_t
+IOConnectMapMemory(
+	 io_connect_t		connect,
+	 uint32_t		memoryType,
+	 task_port_t		intoTask,
+	 mach_vm_address_t	*atAddress,
+	 mach_vm_size_t		*ofSize,
+	 IOOptionBits		 options );
+
+#endif /* !__LP64__ || defined(IOCONNECT_MAPMEMORY_10_6) */
+
+
+/*! @function IOConnectMapMemory64
+    @abstract Map hardware or shared memory into the caller's task.
+    @discussion This is a generic method to create a mapping in the callers task. The family will interpret the type parameter to determine what sort of mapping is being requested. Cache modes and placed mappings may be requested by the caller.
+    @param connect The connect handle created by IOServiceOpen.
+    @param memoryType What is being requested to be mapped, not interpreted by IOKit and family defined. The family may support physical hardware or shared memory mappings.
+    @param intoTask The task port for the task in which to create the mapping. This may be different to the task which the opened the connection.
+    @param atAddress An in/out parameter - if the kIOMapAnywhere option is not set, the caller should pass the address where it requests the mapping be created, otherwise nothing need to set on input. The address of the mapping created is passed back on sucess.
+    @param ofSize The size of the mapping created is passed back on success.
+    @result A kern_return_t error code. */
+
+kern_return_t IOConnectMapMemory64(
+	 io_connect_t		connect,
 	 uint32_t		memoryType,
 	 task_port_t		intoTask,
 	 mach_vm_address_t	*atAddress,
@@ -593,11 +703,12 @@ kern_return_t IOConnectMapMemory
     @discussion This is a generic method to remove a mapping in the callers task.
     @param connect The connect handle created by IOServiceOpen.
     @param memoryType The memory type originally requested in IOConnectMapMemory.
-    @param intoTask The task port for the task in which to remove the mapping. This may be different to the task which the opened the connection.
+    @param fromTask The task port for the task in which to remove the mapping. This may be different to the task which the opened the connection.
     @param atAddress The address of the mapping to be removed.
     @result A kern_return_t error code. */
 
-#if !__LP64__
+#if !__LP64__ || defined(IOCONNECT_MAPMEMORY_10_6)
+
 kern_return_t
 IOConnectUnmapMemory(
 	io_connect_t	connect,
@@ -605,14 +716,33 @@ IOConnectUnmapMemory(
 	task_port_t	fromTask,
 	vm_address_t	atAddress );
 
-kern_return_t IOConnectUnmapMemory64
 #else
-kern_return_t IOConnectUnmapMemory
-#endif
-	(io_connect_t		connect,
+
+kern_return_t
+IOConnectUnmapMemory(
+	io_connect_t	connect,
+	uint32_t	memoryType,
+	task_port_t	fromTask,
+	mach_vm_address_t	atAddress );
+
+
+#endif /* !__LP64__ || defined(IOCONNECT_MAPMEMORY_10_6) */
+
+/*! @function IOConnectUnmapMemory64
+    @abstract Remove a mapping made with IOConnectMapMemory64.
+    @discussion This is a generic method to remove a mapping in the callers task.
+    @param connect The connect handle created by IOServiceOpen.
+    @param memoryType The memory type originally requested in IOConnectMapMemory.
+    @param fromTask The task port for the task in which to remove the mapping. This may be different to the task which the opened the connection.
+    @param atAddress The address of the mapping to be removed.
+    @result A kern_return_t error code. */
+
+kern_return_t IOConnectUnmapMemory64(
+	io_connect_t		connect,
 	 uint32_t		memoryType,
 	 task_port_t		fromTask,
 	 mach_vm_address_t	atAddress );
+
 
 /*! @function IOConnectSetCFProperties
     @abstract Set CF container based properties on a connection.
@@ -814,6 +944,23 @@ IORegistryEntryFromPath(
 	mach_port_t		masterPort,
 	const io_string_t	path );
 
+
+/*! @function IORegistryEntryFromPathCFString
+    @abstract Looks up a registry entry by path.
+    @discussion This function parses paths to lookup registry entries. The path should begin with '<plane name>:' If there are characters remaining unparsed after an entry has been looked up, this is considered an invalid lookup. Paths are further documented in IORegistryEntry.h
+    @param masterPort The master port obtained from IOMasterPort(). Pass kIOMasterPortDefault to look up the default master port.
+    @param path A CFString path.
+    @result A handle to the IORegistryEntry witch was found with the path, to be released with IOObjectRelease by the caller, or MACH_PORT_NULL on failure. */
+
+io_registry_entry_t
+IORegistryEntryCopyFromPath(
+	mach_port_t	masterPort,
+	CFStringRef	path )
+#if defined(__MAC_10_11)
+__OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0)
+#endif
+;
+
 // options for IORegistryCreateIterator(), IORegistryEntryCreateIterator, IORegistryEntrySearchCFProperty()
 enum {
     kIORegistryIterateRecursively	= 0x00000001,
@@ -936,6 +1083,34 @@ IORegistryEntryGetPath(
 	const io_name_t         plane,
 	io_string_t		path );
 
+/*! @function IORegistryEntryCopyPath
+    @abstract Create a path for a registry entry.
+    @discussion The path for a registry entry is returned as a CFString The path describes the entry's attachment in a particular plane, which must be specified. The path begins with the plane name followed by a colon, and then followed by '/' separated path components for each of the entries between the root and the registry entry. An alias may also exist for the entry, and will be returned if available.
+    @param entry The registry entry handle whose path to look up.
+    @param plane The name of an existing registry plane. Plane names are defined in IOKitKeys.h, eg. kIOServicePlane.
+    @result An instance of CFString on success, to be released by the caller. IORegistryEntryCopyPath will fail if the entry is not attached in the plane. */
+
+CFStringRef
+IORegistryEntryCopyPath(
+	io_registry_entry_t	entry,
+	const io_name_t         plane)
+#if defined(__MAC_10_11)
+__OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0)
+#endif
+;
+
+/*! @function IORegistryEntryGetRegistryEntryID
+    @abstract Returns an ID for the registry entry that is global to all tasks.
+    @discussion The entry ID returned by IORegistryEntryGetRegistryEntryID can be used to identify a registry entry across all tasks. A registry entry may be looked up by its entryID by creating a matching dictionary with IORegistryEntryIDMatching() to be used with the IOKit matching functions. The ID is valid only until the machine reboots.
+    @param entry The registry entry handle whose ID to look up.
+    @param entryID The resulting ID.
+    @result A kern_return_t error code. */
+
+kern_return_t
+IORegistryEntryGetRegistryEntryID(
+	io_registry_entry_t	entry,
+	uint64_t *		entryID );
+
 /*! @function IORegistryEntryCreateCFProperties
     @abstract Create a CF dictionary representation of a registry entry's property table.
     @discussion This function creates an instantaneous snapshot of a registry entry's property table, creating a CFDictionary analogue in the caller's task. Not every object available in the kernel is represented as a CF container; currently OSDictionary, OSArray, OSSet, OSSymbol, OSString, OSData, OSNumber, OSBoolean are created as their CF counterparts. 
@@ -985,7 +1160,7 @@ IORegistryEntrySearchCFProperty(
 	const io_name_t		plane,
 	CFStringRef		key,
         CFAllocatorRef		allocator,
-	IOOptionBits		options );
+	IOOptionBits		options ) CF_RETURNS_RETAINED;
 
 /*  @function IORegistryEntryGetProperty - deprecated,
     use IORegistryEntryCreateCFProperty */
@@ -1070,7 +1245,7 @@ IORegistryEntryGetParentIterator(
     @discussion This function will return the parent to which the registry entry was first attached in a plane.
     @param entry The registry entry whose parent to look up.
     @param plane The name of an existing registry plane. Plane names are defined in IOKitKeys.h, eg. kIOServicePlane.
-    @param child The first parent of the registry entry, on success. The parent must be released by the caller.
+    @param parent The first parent of the registry entry, on success. The parent must be released by the caller.
     @result A kern_return_t error code. */
 
 kern_return_t
@@ -1105,17 +1280,17 @@ IORegistryEntryInPlane(
 
 CFMutableDictionaryRef
 IOServiceMatching(
-	const char *	name );
+	const char *	name ) CF_RETURNS_RETAINED;
 
 /*! @function IOServiceNameMatching
     @abstract Create a matching dictionary that specifies an IOService name match.
-    @discussion A common matching criteria for IOService is based on its name. IOServiceNameMatching will create a matching dictionary that specifies an IOService with a given name. Some IOServices created from the OpenFirmware device tree will perform name matching on the standard OF compatible, name, model properties.
+    @discussion A common matching criteria for IOService is based on its name. IOServiceNameMatching will create a matching dictionary that specifies an IOService with a given name. Some IOServices created from the device tree will perform name matching on the standard compatible, name, model properties.
     @param name The IOService name, as a const C-string.
     @result The matching dictionary created, is returned on success, or zero on failure. The dictionary is commonly passed to IOServiceGetMatchingServices or IOServiceAddNotification which will consume a reference, otherwise it should be released with CFRelease by the caller. */
 
 CFMutableDictionaryRef
 IOServiceNameMatching(
-	const char *	name );
+	const char *	name ) CF_RETURNS_RETAINED;
 
 /*! @function IOBSDNameMatching
     @abstract Create a matching dictionary that specifies an IOService match based on BSD device name.
@@ -1129,36 +1304,30 @@ CFMutableDictionaryRef
 IOBSDNameMatching(
 	mach_port_t	masterPort,
 	uint32_t	options,
-	const char *	bsdName );
-
-/*! @function IOOpenFirmwarePathMatching
-    @abstract Create a matching dictionary that specifies an IOService match based on  an OpenFirmware device path.
-    @discussion Certain IOServices (currently, block and ethernet boot devices) may be looked up by a path that specifies their location in the OpenFirmware device tree, represented in the registry by the kIODeviceTreePlane plane. This function creates a matching dictionary that will match IOService's found with a given OpenFirmware device path.
-    @param masterPort The master port obtained from IOMasterPort(). Pass kIOMasterPortDefault to look up the default master port.
-    @param options No options are currently defined.
-    @param path The OpenFirmware device path, as a const char *.
-    @result The matching dictionary created, is returned on success, or zero on failure. The dictionary is commonly passed to IOServiceGetMatchingServices or IOServiceAddNotification which will consume a reference, otherwise it should be released with CFRelease by the caller. */
+	const char *	bsdName ) CF_RETURNS_RETAINED;
 
 CFMutableDictionaryRef
 IOOpenFirmwarePathMatching(
 	mach_port_t	masterPort,
 	uint32_t	options,
-	const char *	path );
+	const char *	path ) DEPRECATED_ATTRIBUTE;
+
+/*! @function IORegistryEntryIDMatching
+    @abstract Create a matching dictionary that specifies an IOService match based on a registry entry ID.
+    @discussion This function creates a matching dictionary that will match a registered, active IOService found with the given registry entry ID. The entry ID for a registry entry is returned by IORegistryEntryGetRegistryEntryID().
+    @param entryID The registry entry ID to be found. 
+    @result The matching dictionary created, is returned on success, or zero on failure. The dictionary is commonly passed to IOServiceGetMatchingServices or IOServiceAddNotification which will consume a reference, otherwise it should be released with CFRelease by the caller. */
+
+CFMutableDictionaryRef
+IORegistryEntryIDMatching(
+	uint64_t	entryID ) CF_RETURNS_RETAINED;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/*! @function IOServiceOFPathToBSDName
-    @abstract Utility to look up an IOService from its OpenFirmware device path, and return its BSD device name if available.
-    @discussion Certain IOServices (currently, block and ethernet boot devices) may be looked up by a path that specifies their location in the OpenFirmware device tree, represented in the registry by the kIODeviceTreePlane plane. This function looks up an IOService object with a given OpenFirmware device path, and returns its associated BSD device name.
-    @param masterPort The master port obtained from IOMasterPort(). Pass kIOMasterPortDefault to look up the default master port.
-    @param openFirmwarePath The OpenFirmware device path, as a const char *.
-    @param bsdName The BSD name, as a const char *, is copied to the callers buffer.
-    @result A kern_return_t error code. */
 
 kern_return_t
 IOServiceOFPathToBSDName(mach_port_t		masterPort,
                          const io_name_t	openFirmwarePath,
-                         io_name_t		bsdName);
+                         io_name_t		bsdName) DEPRECATED_ATTRIBUTE;
 						 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -1242,6 +1411,10 @@ IOCatalogueModuleLoaded(
         mach_port_t             masterPort,
         io_name_t               name );
 
+/* Use IOCatalogueSendData(), with kIOCatalogResetDrivers, to replace catalogue
+ * rather than emptying it. Doing so keeps instance counts down by uniquing
+ * existing personalities.
+ */
 kern_return_t
 IOCatalogueReset(
         mach_port_t             masterPort,

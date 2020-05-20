@@ -11,6 +11,6 @@
 
 void setup_hid(CGSize displaySize);
 void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client);
-void VNCPointerNew(int buttons, int x, int y, rfbClientPtr client);
+void VNCPointerNew(uint8_t buttonMask, int x, int y, rfbClientPtr client);
 
 #endif /* hid_h */

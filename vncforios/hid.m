@@ -12,16 +12,48 @@
 
 static IOHIDEventSystemClientRef eventClient;
 static CGSize displaySize;
+static uint64_t multitouchDeviceID;
 
 void setup_hid(CGSize scaledDisplaySize)
 {
     eventClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
     displaySize = scaledDisplaySize;
+    
+    mach_port_t masterPort;
+    IOMasterPort(MACH_PORT_NULL, &masterPort);
+    CFMutableDictionaryRef classesToMatch = IOServiceMatching("AppleMultitouchDevice");
+    
+    io_iterator_t matchingServices;
+    kern_return_t kernResult = IOServiceGetMatchingServices(masterPort, classesToMatch, &matchingServices);
+    if (kernResult != KERN_SUCCESS)
+    {
+        NSLog(@"failed to find AppleMultitouchDevice service");
+        return;
+    }
+
+    io_object_t service;
+    while ((service = IOIteratorNext(matchingServices)))
+    {
+        uint64_t state = 0;
+        uint32_t integer = 0;
+        uint64_t time = 0;
+        IOServiceGetBusyStateAndTime(service, &state, &integer, &time);
+        if (state & kIOServiceRegisteredState)
+        {
+            IORegistryEntryGetRegistryEntryID(service, &multitouchDeviceID);
+        }
+    }
+
+    IOObjectRelease(service);
+    IOObjectRelease(matchingServices);
+    mach_port_deallocate(mach_task_self(), masterPort);
+    
+    NSLog(@"AppleMultitouchDevice: 0x%llx", multitouchDeviceID);
 }
 
 static void send_event(IOHIDEventRef event)
 {
-    IOHIDEventSetSenderID(event, 0x8000000817319372);
+    IOHIDEventSetSenderID(event, multitouchDeviceID);
     IOHIDEventSystemClientDispatchEvent(eventClient, event);
     CFRelease(event);
 }
@@ -29,6 +61,8 @@ static void send_event(IOHIDEventRef event)
 void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client)
 {
     uint16_t usage;
+    uint16_t usagePage = kHIDPage_KeyboardOrKeypad;
+
     switch (key)
     {
         case XK_exclam:
@@ -143,49 +177,64 @@ void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client)
         case XK_Down: usage = kHIDUsage_KeyboardDownArrow; break;
         case XK_Left: usage = kHIDUsage_KeyboardLeftArrow; break;
         case XK_Right: usage = kHIDUsage_KeyboardRightArrow; break;
+        // map the keyboard home key and exc key to the Menu button
         case XK_Home:
-        case XK_Begin: usage = kHIDUsage_KeyboardHome; break;
+        case XK_Escape:
+        case XK_Begin: {
+            usagePage = kHIDPage_Consumer;
+            usage = kHIDUsage_Csmr_Menu;
+            break;
+        }
         case XK_End: usage = kHIDUsage_KeyboardEnd; break;
         case XK_Page_Up: usage = kHIDUsage_KeyboardPageUp; break;
         case XK_Page_Down: usage = kHIDUsage_KeyboardPageDown; break;
         default: return;
     }
-    NSLog(@"%d", usage);
     
-    IOHIDEventRef event = IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), 0x07, usage, down, 0);
+    IOHIDEventRef event = IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), usagePage, usage, down, 0);
     send_event(event);
 }
 
-static int buttons_;
-void VNCPointerNew(int buttons, int x, int y, rfbClientPtr client)
+static uint8_t lastButtonMask;
+void VNCPointerNew(uint8_t buttonMask, int x, int y, rfbClientPtr client)
 {
-    int diff = buttons_ ^ buttons;
-    bool twas = (buttons_ & 0x1) != 0;
-    bool tis = (buttons & 0x1) != 0;
-    buttons_ = buttons;
+    int diff = lastButtonMask ^ buttonMask;
+    bool wasDown = (lastButtonMask & 0x1) != 0;
+    bool isDown = (buttonMask & 0x1) != 0;
+    lastButtonMask = buttonMask;
 
-    rfbDefaultPtrAddEvent(buttons, x, y, client);
+    rfbDefaultPtrAddEvent(buttonMask, x, y, client);
     
-    if ((diff & 0x10) != 0)
-        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Telephony, kHIDUsage_Tfon_Flash, (buttons & 0x10) != 0, 0));
-    if ((diff & 0x04) != 0)
-        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Consumer, kHIDUsage_Csmr_Menu, (buttons & 0x04) != 0, 0));
-    if ((diff & 0x02) != 0)
-        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Consumer, kHIDUsage_Csmr_Power, (buttons & 0x02) != 0, 0));
+    if ((diff & rfbButton5Mask) != 0) {
+        BOOL down = (buttonMask & rfbButton5Mask) != 0;
+        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Telephony, kHIDUsage_Tfon_Flash, down, 0));
+    }
+    else if ((diff & rfbButton3Mask) != 0) {
+        // Menu button
+        BOOL down = (buttonMask & rfbButton3Mask) != 0;
+        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Consumer, kHIDUsage_Csmr_Menu, down, 0));
+    }
+    else if ((diff & rfbButton2Mask) != 0) {
+        // Power button
+        BOOL down = (buttonMask & rfbButton2Mask) != 0;
+        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Consumer, kHIDUsage_Csmr_Power, down, 0));
+    }
 
     uint32_t handm;
     uint32_t fingerm;
 
-    if (twas == 0 && tis == 1) {
+    if (wasDown == 0 && isDown == 1) {
         handm = kIOHIDDigitizerEventRange | kIOHIDDigitizerEventTouch | kIOHIDDigitizerEventIdentity;
         fingerm = kIOHIDDigitizerEventRange | kIOHIDDigitizerEventTouch;
-    } else if (twas == 1 && tis == 1) {
+    } else if (wasDown == 1 && isDown == 1) {
         handm = kIOHIDDigitizerEventPosition;
         fingerm = kIOHIDDigitizerEventPosition;
-    } else if (twas == 1 && tis == 0) {
+    } else if (wasDown == 1 && isDown == 0) {
         handm = kIOHIDDigitizerEventRange | kIOHIDDigitizerEventTouch | kIOHIDDigitizerEventIdentity | kIOHIDDigitizerEventPosition;
         fingerm = kIOHIDDigitizerEventRange | kIOHIDDigitizerEventTouch;
-    } else return;
+    } else {
+        return;
+    }
 
     IOHIDFloat xf = x;
     IOHIDFloat yf = y;
@@ -193,13 +242,11 @@ void VNCPointerNew(int buttons, int x, int y, rfbClientPtr client)
     xf /= displaySize.width;
     yf /= displaySize.height;
     
-    NSLog(@"%f %f", xf, yf);
-
     IOHIDEventRef hand = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, mach_absolute_time(), kIOHIDDigitizerTransducerTypeHand, 1<<22, 1, handm, 0, xf, yf, 0, 0, 0, 0, 0, 0);
     IOHIDEventSetIntegerValue(hand, kIOHIDEventFieldIsBuiltIn, true);
     IOHIDEventSetIntegerValue(hand, kIOHIDEventFieldDigitizerIsDisplayIntegrated, true);
 
-    IOHIDEventRef finger = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), 3, 2, fingerm, xf, yf, 0, 0, 0, tis, tis, 0);
+    IOHIDEventRef finger = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), 3, 2, fingerm, xf, yf, 0, 0, 0, wasDown, isDown, 0);
     IOHIDEventAppendEvent(hand, finger);
     CFRelease(finger);
 
