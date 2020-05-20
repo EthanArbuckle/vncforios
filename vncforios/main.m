@@ -17,18 +17,15 @@ static CGFloat displayScale = 0.4;
 static CFStringRef displayName;
 static IOSurfaceAcceleratorRef accelerator;
 
-static enum rfbNewClientAction vnc_client_new(rfbClientPtr client)
-{
+static enum rfbNewClientAction vnc_client_new(rfbClientPtr client) {
     return RFB_CLIENT_ACCEPT;
 }
 
-static rfbBool vnc_check_password(rfbClientPtr client, const char *data, int size)
-{
+static rfbBool vnc_check_password(rfbClientPtr client, const char *data, int size) {
     return 1;
 }
 
-void create_vnc_server()
-{
+void create_vnc_server() {
     int BytesPerPixel = 4;
     int BitsPerSample = 8;
 
@@ -71,8 +68,8 @@ void create_vnc_server()
     rfbRunEventLoop(_remote_screen, -1, true);
 }
 
-void draw(CFRunLoopTimerRef timer, void *info) {
-
+void draw(void) {
+    
     IOSurfaceLock(fullsizeSurface, 0, nil);
     CARenderServerRenderDisplay(0, displayName, fullsizeSurface, 0, 0);
     IOSurfaceUnlock(fullsizeSurface, 0, 0);
@@ -89,13 +86,11 @@ void draw(CFRunLoopTimerRef timer, void *info) {
 @end
 @implementation VncSurfaceDrawer
 
-- (void)draw
-{
-    draw(NULL, NULL);
+- (void)draw {
+    draw();
 }
 
 @end
-
 
 int main(int argc, const char *argv[]) {
         

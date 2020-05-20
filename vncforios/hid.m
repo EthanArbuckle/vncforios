@@ -14,8 +14,7 @@ static IOHIDEventSystemClientRef eventClient;
 static CGSize displaySize;
 static uint64_t multitouchDeviceID;
 
-void setup_hid(CGSize scaledDisplaySize)
-{
+void setup_hid(CGSize scaledDisplaySize) {
     eventClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
     displaySize = scaledDisplaySize;
     
@@ -51,15 +50,13 @@ void setup_hid(CGSize scaledDisplaySize)
     NSLog(@"AppleMultitouchDevice: 0x%llx", multitouchDeviceID);
 }
 
-static void send_event(IOHIDEventRef event)
-{
+static void send_event(IOHIDEventRef event) {
     IOHIDEventSetSenderID(event, multitouchDeviceID);
     IOHIDEventSystemClientDispatchEvent(eventClient, event);
     CFRelease(event);
 }
 
-void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client)
-{
+void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client) {
     uint16_t usage;
     uint16_t usagePage = kHIDPage_KeyboardOrKeypad;
 
@@ -195,9 +192,8 @@ void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client)
     send_event(event);
 }
 
-static uint8_t lastButtonMask;
-void VNCPointerNew(uint8_t buttonMask, int x, int y, rfbClientPtr client)
-{
+static int lastButtonMask;
+void VNCPointerNew(int buttonMask, int x, int y, rfbClientPtr client) {
     int diff = lastButtonMask ^ buttonMask;
     bool wasDown = (lastButtonMask & 0x1) != 0;
     bool isDown = (buttonMask & 0x1) != 0;
