@@ -1,0 +1,10 @@
+Package: com.ethanarbuckle.vncserverd
+Name: vncserverd
+Depends: 
+Version: 0.0.1
+Architecture: all
+Description: VNC server for iOS and tvOS (9.0+)
+Maintainer: Ethan Arbuckle
+Author: Ethan Arbuckle
+Section: System
+Tag: role::hacker

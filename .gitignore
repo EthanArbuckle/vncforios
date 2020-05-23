@@ -2,3 +2,6 @@
 *.xcuserdatad/*
 /vncforios.xcodeproj/project.xcworkspace/xcuserdata
 /vncforios.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+*.theos
+vncserverd/packages/*
+vncforios.xcodeproj/xcuserdata

@@ -412,7 +412,7 @@
 				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				FRAMEWORK_SEARCH_PATHS = "/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/";
+				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/privateframeworks";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/include/**",
@@ -445,7 +445,7 @@
 				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				FRAMEWORK_SEARCH_PATHS = "/Users/user/Downloads/sdks-master/iPhoneOS11.2.sdk/System/Library/PrivateFrameworks/";
+				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/privateframeworks";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/include/**",
