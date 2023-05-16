@@ -1,3 +1,4 @@
+#import <Foundation/Foundation.h>
 
 #define MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT 6
 extern int memorystatus_control(int a, int b, int c, void *d, int e);

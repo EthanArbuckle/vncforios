@@ -2,10 +2,15 @@
 import subprocess
 import os
 
-DEVICE_SSH_PORT = "2222"
+ROOTLESS_TARGET = True
+
+DEVICE_SSH_PORT = "2223"
 DEVICE_SSH_IP = "localhost"
 TARGET_EXECUTABLE_NAME = "vncforios"
+
 TARGET_INSTALL_PATH = "/usr/bin/"
+if ROOTLESS_TARGET:
+    TARGET_INSTALL_PATH = "/fs/jb/usr/bin/"
 
 
 def run_command_on_device(command: str) -> bytes:
@@ -35,7 +40,7 @@ def kill_running_processes() -> None:
 
 def does_file_exist_on_device(remote: str) -> bool:
     try:
-        run_command_on_device(f"test -f {remote}")
+        run_command_on_device(f"ls -l {remote}")
         return True
     except:
         pass
@@ -60,7 +65,7 @@ def codesign_remote_executable(remote_executable: str, remote_entitlements: str)
 
 if __name__ == "__main__":
 
-    device_connected = does_file_exist_on_device("/bin/ls")
+    device_connected = does_file_exist_on_device("/fs/jb/bin/ls")
     if not device_connected:
         raise Exception("not deploying to device because no jailbroken device is found")
 
@@ -77,10 +82,11 @@ if __name__ == "__main__":
     # Kill old instances of the process that may be running on the device
     kill_running_processes()
 
-    # Copy the entitlement plist if needed
-    remote_entitlement_file = "/tmp/entitlements.plist"
-    if not does_file_exist_on_device(remote_entitlement_file):
-        copy_file_to_device(entitlement_file, "/tmp/entitlements.plist")
+    # Locally sign the build
+    subprocess.check_output(
+        f"/opt/homebrew/bin/ldid2 -S{entitlement_file} {xcode_fresh_executable}",
+        shell=True,
+    )
 
     # Delete old versions of the executable from the device (to delete cached cs blobs)
     remote_path = os.path.join(TARGET_INSTALL_PATH, TARGET_EXECUTABLE_NAME)
@@ -88,6 +94,3 @@ if __name__ == "__main__":
 
     # Copy new executable
     copy_file_to_device(xcode_fresh_executable, remote_path)
-
-    # Sign executable
-    codesign_remote_executable(remote_path, "/tmp/entitlements.plist")
