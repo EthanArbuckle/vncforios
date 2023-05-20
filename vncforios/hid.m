@@ -178,8 +178,8 @@ void VNCKeyboard(rfbBool down, rfbKeySym key, rfbClientPtr client) {
         case XK_Home:
         case XK_Escape:
         case XK_Begin: {
-            usagePage = kHIDPage_Consumer;
-            usage = kHIDUsage_Csmr_Menu;
+            usagePage = kHIDPage_GenericDesktop;
+            usage = kHIDUsage_Button_134;
             break;
         }
         case XK_End: usage = kHIDUsage_KeyboardEnd; break;
@@ -208,7 +208,7 @@ void VNCPointerNew(int buttonMask, int x, int y, rfbClientPtr client) {
     else if ((diff & rfbButton3Mask) != 0) {
         // Menu button
         BOOL down = (buttonMask & rfbButton3Mask) != 0;
-        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_Consumer, kHIDUsage_Csmr_Menu, down, 0));
+        send_event(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, mach_absolute_time(), kHIDPage_GenericDesktop, kHIDUsage_Button_134, down, 0));
     }
     else if ((diff & rfbButton2Mask) != 0) {
         // Power button
